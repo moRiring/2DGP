@@ -1,0 +1,3 @@
+import GameFrameWork
+
+GameFrameWork.run()
