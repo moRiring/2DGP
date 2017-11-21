@@ -1,3 +1,5 @@
 import GameFrameWork
 
-GameFrameWork.run()
+import StartState
+
+GameFrameWork.run(StartState)

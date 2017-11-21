@@ -1,64 +1,57 @@
 from pico2d import *
 
-open_canvas(600, 300)
-
-class BackGround:
-    def __init__(self):
-        self.image = load_image("background.png")
-        self.x = 0
-
-    def draw(self):
-        if self.x <= 600:
-            self.image.clip_draw(self.x, 0, 600, 300, 300, 150)
-        else:
-            self.image.clip_draw(self.x, 0, 1200 - self.x, 300, (1200 - self.x) / 2, 150)
-            self.image.clip_draw(0, 0, 600 - (1200 - self.x), 300, (1200 - self.x) + (600 - (1200 - self.x)) / 2, 150)
-
-    def update(self):
-        self.x = (self.x  + 10) % 1200
-
-class Grass:
-    def __init__(self):
-        self.image = load_image("Grass.png")
-        self.x = 0
-
-    def draw(self):
-        if self.x <= 600:
-            self.image.clip_draw(self.x, 0, 600, 48, 300, 24)
-        else:
-            self.image.clip_draw(self.x, 0, 1200 - self.x, 48, (1200 - self.x) / 2, 24)
-            self.image.clip_draw(0, 0, 600 - (1200 - self.x), 48, (1200 - self.x) + (600 - (1200 - self.x)) / 2, 24)
-
-    def update(self):
-        self.x = (self.x  + 10) % 1200
-
 class Eevee:
+    image = None
+
+    PIXEL_PER_METER = (10.0 / 0.3)
+    JUMP_SPEED_KMPH = 70.0
+    JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
+    JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
+    JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
+
+    TIME_PER_ACTION = 0.5
+    ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+    FRAMES_PER_ACTION = 3
+
+    RUN, JUMP, DROP, ATTACK, HIT = 0, 1, 2, 3, 4
+
     def __init__(self):
-        self.image = load_image("Eevee_Run.png")
+        if Eevee.image == None:
+            Eevee.image = load_image("Eevee_Run.png")
         self.frame = 0
         self.x = 80
         self.y = 45
-        self.w = (int)((self.image.w) / 3)
-        self.h = (int)(self.image.h)
+        self.w = (int)((Eevee.image.w) / 3)
+        self.h = (int)(Eevee.image.h)
+        self.state = self.RUN
+        self.dir =  1
+        self.total_frames = 0.0
+
 
     def draw(self):
         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
 
-    def update(self):
-        self.frame = (self.frame + 1) % 3
 
-eevee = Eevee()
-background = BackGround()
-grass = Grass()
+    def update(self, frame_time):
+        self.total_frames += Eevee.FRAMES_PER_ACTION * Eevee.ACTION_PER_TIME * frame_time
+        self.frame = int(self.total_frames) % 3
 
-while(True):
-    clear_canvas()
-    background.draw()
-    grass.draw()
-    eevee.draw()
-    update_canvas()
-    background.update()
-    grass.update()
-    eevee.update()
-    delay(0.08)
+        if self.state in (self.JUMP, self.DROP):
+            distance = Eevee.JUMP_SPEED_PPS * frame_time
+            self.y += (self.dir * distance)
+            if self.y > 150:
+                self.state = self.DROP
+                self.dir = -1
+                self.y = 150
+            elif self.y < 45:
+                self.state = self.RUN
+                self.y = 45
 
+
+
+
+    def handle_event(self, event, frame_time):
+        if (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
+            if self.state == self.RUN:
+                self.state = self.JUMP
+                self.dir = 1
