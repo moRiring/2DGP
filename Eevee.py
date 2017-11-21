@@ -15,6 +15,10 @@ class Eevee:
 
     RUN, JUMP, DROP, ATTACK, HIT = 0, 1, 2, 3, 4
 
+    FRUIT, KEY = 0, 1
+
+    item_num = {"fruit" : 0, "key" : 0}
+
     def __init__(self):
         if Eevee.image == None:
             Eevee.image = load_image("Eevee_Run.png")
@@ -29,6 +33,7 @@ class Eevee:
 
 
     def draw(self):
+        self.draw_bb()
         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
 
 
@@ -48,10 +53,21 @@ class Eevee:
                 self.y = 45
 
 
-
+    def get_item(self, item_type):
+        if item_type == self.FRUIT:
+            self.item_num["fruit"] += 1
+        elif item_type == self.KEY:
+            self.item_num["key"] += 1
 
     def handle_event(self, event, frame_time):
         if (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
             if self.state == self.RUN:
                 self.state = self.JUMP
                 self.dir = 1
+
+
+    def get_bb(self):
+        return self.x - self.w / 2 + 5, self.y - self.h / 2 + 5, self.x + self.w / 2 - 5, self.y + self.h / 2 - 5
+
+    def draw_bb(self):
+        draw_rectangle(*self.get_bb())
