@@ -69,8 +69,10 @@ def drawObject(frame_time):
     background.draw()
     grass.draw()
     map.draw()
+    #map보다 object
     eevee.draw()
     ui.draw(eevee)
+    #eevee의 레퍼런스는 바뀌지 x, ui 내부에 get_eevee(eevee)함수 구현
 
 
 def draw(frame_time):

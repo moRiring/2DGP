@@ -26,8 +26,12 @@ class Map:
     	    "num2" : {"Object": "ITEM", "Type" : "FRUIT", "x" : 1000, "y" : 150} \
         }                                                                \
         '
-        #map_data_file = (str)(open('map_data.txt', 'r'))
-        map_data = json.loads(map_data_file)
+        #dic 대신 list
+
+        map_data = json.loads('map_data.json')
+
+        #map_data_file = (str)(open('map_data.json', 'r'))
+        #map_data = json.loads(map_data_file)
         #map_data_file.close()
 
         item_table = {
