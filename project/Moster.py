@@ -1,14 +1,14 @@
 from pico2d import *
 
 class Moster:
-    NONE, DIE = 0, 1
+    ALIVE, DIE = 0, 1
 
     image = None
 
     type = None
 
     def __init__(self):
-        pass
+        self.state = self.ALIVE
 
     def draw(self, right):
         pass

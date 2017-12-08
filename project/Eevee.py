@@ -14,6 +14,7 @@ class Eevee:
     FRAMES_PER_ACTION = 3
 
     RUN, JUMP, DROP, ATTACK, HIT = 0, 1, 2, 3, 4
+    NOMAL, FIRE, ELECTRIC, WATER = 0, 1, 2, 3, 4
 
     FRUIT, KEY = 0, 1
 

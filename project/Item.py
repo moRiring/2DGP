@@ -8,6 +8,10 @@ class Item:
     right = 0
     type = None
 
+    key_image = None
+    fruit_image = None
+    firestone_image = None
+
     ITEM = 0
 
     def __init__(self, y):
