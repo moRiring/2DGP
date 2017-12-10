@@ -20,6 +20,10 @@ class Item:
         self.x = 100
         self.y = 100
         self.state = self.GET
+        if Item.key_image == None:
+            Item.image = load_image('resource/Key.png')
+        if Item.fruit_image = None:
+            Item.image = load_image('resource/Tree_Fruit.png')
 
     def draw(self, right):
         self.right = right
