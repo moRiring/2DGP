@@ -66,7 +66,11 @@ def update(frame_time):
                     eevee.get_item(data.type)
                     data.get()
             if data.object_TYPE == "MONSTER":
-                eevee.collision_monter()
+                if data.state != data.DIE:
+                    if eevee.state == eevee.ATTACK:
+                        data.die()
+                    else:
+                        eevee.hit()
 
 
 def drawObject(frame_time):

@@ -60,3 +60,7 @@ class Moster:
     def update(self, frame_time):
         self.total_frames += Moster.FRAMES_PER_ACTION * Moster.ACTION_PER_TIME * frame_time
         self.frame = (int)(self.total_frames) % 2
+
+
+    def die(self):
+        self.state = self.DIE

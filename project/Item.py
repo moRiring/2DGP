@@ -46,11 +46,6 @@ class Item:
 
         self.image.opacify(1)
 
-    def draw_ui(self):
-        if self.type == self.FRUIT:
-            self.fruit_image.draw(self.x, self.y)
-        if self.type == self.KEY:
-            self.key_image.draw(self.x, self.y)
 
     def get_bb(self):
         right = self.map.right

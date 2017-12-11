@@ -4,6 +4,12 @@ class Eevee:
     image = None
 
     PIXEL_PER_METER = (10.0 / 0.3)
+
+    ATTACK_SPEED_KMPH = 25.0
+    ATTACK_SPEED_MPM = (ATTACK_SPEED_KMPH * 1000.0 / 60.0)
+    ATTACK_SPEED_MPS = (ATTACK_SPEED_MPM / 60.0)
+    ATTACK_SPEED_PPS = (ATTACK_SPEED_MPS * PIXEL_PER_METER)
+
     JUMP_SPEED_KMPH = 50.0
     JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
     JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
@@ -30,7 +36,9 @@ class Eevee:
         self.w = (int)((Eevee.image.w) / 3)
         self.h = (int)(Eevee.image.h / 3)
         self.state = self.RUN
-        self.dir =  1
+        self.heart = 6
+        self.x_dir = 1
+        self.y_dir =  1
         self.alpha = 1
         self.time = 0
         self.total_frames = 0.0
@@ -50,28 +58,39 @@ class Eevee:
 
         if self.state in (self.JUMP, self.DROP):
             distance = Eevee.JUMP_SPEED_PPS * frame_time
-            self.y += (self.dir * distance)
+            self.y += (self.y_dir * distance)
+
             if self.y > 150:
                 self.state = self.DROP
-                self.dir = -1
+                self.y_dir = -1
                 self.y = 150
             elif self.y < 45:
                 self.state = self.RUN
                 self.y = 45
 
+        if self.state == self.ATTACK:
+            distance = Eevee.ATTACK_SPEED_PPS * frame_time
+            self.x += (self.x_dir * distance)
+
+            if self.x_dir == 0:
+                self.frame_row = int(self.total_frames) % 3
+
+            if self.x > 120:
+                self.x_dir = -1
+                self.x = 120
+                self.state = self.RUN
+                self.frame_col = 0
+
+
         if self.state == self.HIT:
             self.time += frame_time
 
-            distance = Eevee.JUMP_SPEED_PPS * frame_time
-            self.y += (self.dir * distance)
-
-            if self.y < 45:
-                self.y = 45
-
             if (int)(self.total_frames) % 2 == 0:
                 self.alpha = 1
+                self.frame_row = 0
             else:
                 self.alpha = 0.5
+                self.frame_row = 1
             if self.time > 1:
                 self.state = self.RUN
                 self.frame_col = 0
@@ -79,26 +98,56 @@ class Eevee:
                 self.alpha = 1
                 self.time = 0
 
+        if self.state not in (self.JUMP, self.DROP) and self.y != 45:
+            distance = Eevee.JUMP_SPEED_PPS * frame_time
+            self.y += (self.y_dir * distance)
+            if self.y < 45:
+                self.y = 45
+            elif self.y > 150:
+                self.y_dir = -1
+                self.y = 150
+
+        if self.x != 80 and self.state != self.ATTACK:
+            distance = Eevee.ATTACK_SPEED_PPS * frame_time
+            self.x += (self.x_dir * distance)
+
+            if self.x < 80:
+                self.x = 80
+                self.state = self.RUN
+
+
+
     def get_item(self, item_type):
-        if item_type == self.FRUIT:
+        if item_type == self.FRUIT and self.item_num["fruit"] < 9:
             self.item_num["fruit"] += 1
-        elif item_type == self.KEY:
-            self.item_num["key"] += 1
 
     def handle_event(self, event, frame_time):
         if (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
             if self.state == self.RUN:
                 self.state = self.JUMP
-                self.dir = 1
+                self.y_dir = 1
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_z):
+            if self.state in (self.RUN, self.JUMP):
+                self.state = self.ATTACK
+                self.x_dir = 1
+                self.frame_col = 1
+                self.frame_row = 2
+
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_x):
+            if self.item_num["fruit"] >= 1 and self.heart < 6:
+                self.item_num["fruit"] -= 1
+                self.heart += 1
 
 
-    def collision_monter(self):
-        if self.state == self.ATTACK:
-            pass
-        elif self.state != self.HIT:
+    def hit(self):
+        if self.state != self.HIT:
             self.state = self.HIT
+            self.heart -= 1
             self.frame_col = 1
             self.frame_row = 0
+
+            if self.heart == 0:
+                pass
 
 
     def get_bb(self):
