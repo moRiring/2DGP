@@ -29,6 +29,7 @@ def enter():
     map = Map()
     ui = UI()
 
+    ui.set_eevee(eevee)
 
 def exit():
     global eevee, background, grass, map, ui
@@ -58,11 +59,14 @@ def update(frame_time):
     eevee.update(frame_time)
 
     for data in map.map:
+        data.update(frame_time)
         if collision.collide(eevee, data):
-            if data.object_TYPE == ITEM:
+            if data.object_TYPE == "ITEM":
                 if data.state == data.NONE:
                     eevee.get_item(data.type)
                     data.get()
+            if data.object_TYPE == "MONSTER":
+                eevee.collision_monter()
 
 
 def drawObject(frame_time):

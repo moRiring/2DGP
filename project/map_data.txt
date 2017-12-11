@@ -1,4 +1,0 @@
-"{
-    "num1" : {"Object": "ITEM", "Type" : "KEY", "x" : 600, "y" : 100}, \
-    "num2" : {"Object": "FRUIT", "Type" : "KEY", "x" : 800, "y" : 500} \
-}"

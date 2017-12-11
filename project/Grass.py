@@ -12,7 +12,7 @@ class Grass:
 
     def __init__(self):
         if Grass.image == None:
-            Grass.image = load_image("resource/Grass.png")
+            Grass.image = load_image("resource/grass.png")
         self.x = 0
 
     def draw(self):

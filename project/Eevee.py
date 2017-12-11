@@ -4,7 +4,7 @@ class Eevee:
     image = None
 
     PIXEL_PER_METER = (10.0 / 0.3)
-    JUMP_SPEED_KMPH = 70.0
+    JUMP_SPEED_KMPH = 50.0
     JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
     JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
     JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
@@ -14,7 +14,7 @@ class Eevee:
     FRAMES_PER_ACTION = 3
 
     RUN, JUMP, DROP, ATTACK, HIT = 0, 1, 2, 3, 4
-    NOMAL, FIRE, ELECTRIC, WATER = 0, 1, 2, 3, 4
+    NOMAL, FIRE, ELECTRIC, WATER = 0, 1, 2, 3
 
     FRUIT, KEY = 0, 1
 
@@ -22,25 +22,31 @@ class Eevee:
 
     def __init__(self):
         if Eevee.image == None:
-            Eevee.image = load_image("resource/Eevee_Run.png")
-        self.frame = 0
+            Eevee.image = load_image("resource/eevee.png")
+        self.frame_row = 0
+        self.frame_col = 0
         self.x = 80
         self.y = 45
         self.w = (int)((Eevee.image.w) / 3)
-        self.h = (int)(Eevee.image.h)
+        self.h = (int)(Eevee.image.h / 3)
         self.state = self.RUN
         self.dir =  1
+        self.alpha = 1
+        self.time = 0
         self.total_frames = 0.0
 
 
     def draw(self):
-        #self.draw_bb()
-        self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
+        self.draw_bb()
+        self.image.opacify(self.alpha)
+        self.image.clip_draw(self.frame_row * self.w, self.h * self.frame_col, self.w, self.h, self.x, self.y)
 
 
     def update(self, frame_time):
         self.total_frames += Eevee.FRAMES_PER_ACTION * Eevee.ACTION_PER_TIME * frame_time
-        self.frame = int(self.total_frames) % 3
+
+        if self.state in (self.RUN, self.JUMP):
+            self.frame_row = int(self.total_frames) % 3
 
         if self.state in (self.JUMP, self.DROP):
             distance = Eevee.JUMP_SPEED_PPS * frame_time
@@ -53,6 +59,25 @@ class Eevee:
                 self.state = self.RUN
                 self.y = 45
 
+        if self.state == self.HIT:
+            self.time += frame_time
+
+            distance = Eevee.JUMP_SPEED_PPS * frame_time
+            self.y += (self.dir * distance)
+
+            if self.y < 45:
+                self.y = 45
+
+            if (int)(self.total_frames) % 2 == 0:
+                self.alpha = 1
+            else:
+                self.alpha = 0.5
+            if self.time > 1:
+                self.state = self.RUN
+                self.frame_col = 0
+                self.frame_row = int(self.total_frames) % 3
+                self.alpha = 1
+                self.time = 0
 
     def get_item(self, item_type):
         if item_type == self.FRUIT:
@@ -67,8 +92,17 @@ class Eevee:
                 self.dir = 1
 
 
+    def collision_monter(self):
+        if self.state == self.ATTACK:
+            pass
+        elif self.state != self.HIT:
+            self.state = self.HIT
+            self.frame_col = 1
+            self.frame_row = 0
+
+
     def get_bb(self):
-        return self.x - self.w / 2 + 5, self.y - self.h / 2 + 5, self.x + self.w / 2 - 5, self.y + self.h / 2 - 5
+        return self.x - self.w / 2 + 10, self.y - self.h / 2 + 10, self.x + self.w / 2 - 10, self.y + self.h / 2 - 10
 
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
