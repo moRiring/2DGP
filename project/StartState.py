@@ -1,8 +1,11 @@
-from BackGround import BackGround
+import GameFrameWork
 from pico2d import *
+
+import EvolutionState
+
 import collision
 
-import GameFrameWork
+from BackGround import BackGround
 from Eevee import Eevee
 from Grass import Grass
 from Map import Map
@@ -48,6 +51,8 @@ def handle_events(frame_time):
             GameFrameWork.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             GameFrameWork.quit()
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_a and eevee.state == eevee.RUN:
+            GameFrameWork.push_state(EvolutionState)
         else:
             eevee.handle_event(event, frame_time)
 
@@ -79,11 +84,21 @@ def drawObject(frame_time):
     map.draw()
     #map보다 object
     eevee.draw()
-    ui.draw(eevee)
+    ui.draw()
     #eevee의 레퍼런스는 바뀌지 x, ui 내부에 get_eevee(eevee)함수 구현
 
 
 def draw(frame_time):
     clear_canvas()
+
     drawObject(frame_time)
+
     update_canvas()
+
+
+def pause():
+    pass
+
+
+def resume():
+    pass

@@ -21,6 +21,7 @@ class Moster:
         self.state = self.ALIVE
         self.total_frames = 0.0
         self.frame = 0
+        self.time = 0
 
         if Moster.rattata_image == None:
             Moster.rattata_image = load_image('resource/rattata.png')
@@ -38,10 +39,10 @@ class Moster:
     def draw(self):
         right = self.map.right
 
+        #self.draw_bb()
+
         if self.state == self.DIE:
             self.image.opacify(0)
-
-        self.draw_bb()
 
         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, (640 - (right - self.x)), self. y)
 

@@ -30,9 +30,13 @@ class Map:
     def create_map(self):
         map_data_file = '                                                   \
         [                                                               \
-            {"Object": "ITEM", "Type" : "KEY", "x" : 600, "y" : 50}, \
-            {"Object": "ITEM", "Type" : "FRUIT", "x" : 1000, "y" : 150}, \
-            {"Object": "MONSTER", "Type" : "RATTATA", "x" : 1500, "y" : 50} \
+            {"Object": "ITEM", "Type" : "KEY", "x" : 600, "y" : 150}, \
+            {"Object": "ITEM", "Type" : "FRUIT", "x" : 900, "y" : 150}, \
+            {"Object": "MONSTER", "Type" : "RATTATA", "x" : 1200, "y" : 45}, \
+            {"Object": "MONSTER", "Type" : "RATTATA", "x" : 1300, "y" : 45}, \
+            {"Object": "ITEM", "Type" : "FIRE_STONE", "x" : 2000, "y" : 150}, \
+            {"Object": "ITEM", "Type" : "ELECTRIC_STONE", "x" : 2500, "y" : 50}, \
+            {"Object": "MONSTER", "Type" : "RATTATA", "x" : 3000, "y" : 45} \
         ]                                                                \
         '
 
@@ -44,7 +48,10 @@ class Map:
 
         item_table = {
             "FRUIT": Item.FRUIT,
-            "KEY": Item.KEY
+            "KEY": Item.KEY,
+            "FIRE_STONE": Item.FIRE_STONE,
+            "ELECTRIC_STONE":Item.ELECTRIC_STONE,
+            "WATER_STONE": Item.WATER_STONE
         }
 
         monster_table = {
@@ -74,7 +81,7 @@ class Map:
         for data in self.map:
             data.update(frame_time)
 
-        if 3000 < self.right:
+        if 4000 < self.right:
             self.left = -40
             self.right = 640
             for data in self.map:
