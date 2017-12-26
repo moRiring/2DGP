@@ -51,9 +51,9 @@ class UI:
 
 
     def draw_evolution(self):
-        self.item_fire_stone_image.draw(self.eevee.x - 50, 120)
+        self.item_fire_stone_image.draw(self.eevee.x - 50, 120+ self.eevee.area)
         self.font.draw(self.eevee.x - 50 + 10, 110 + self.eevee.area, "%d" % self.eevee.item_num[self.FIRE_STONE], (0, 0, 0))
-        self.item_electric_stone_image.draw(self.eevee.x, 120)
+        self.item_electric_stone_image.draw(self.eevee.x, 120+ self.eevee.area)
         self.font.draw(self.eevee.x + 10, 110 + self.eevee.area, "%d" % self.eevee.item_num[self.ELECTRIC_STONE], (0, 0, 0))
-        self.item_water_stone_image.draw(self.eevee.x + 50, 120)
+        self.item_water_stone_image.draw(self.eevee.x + 50, 120+ self.eevee.area)
         self.font.draw(self.eevee.x + 50 + 10, 110 + self.eevee.area, "%d" % self.eevee.item_num[self.WATER_STONE], (0, 0, 0))

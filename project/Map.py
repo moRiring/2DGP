@@ -1,13 +1,13 @@
 import json
 
 from Item import Item
-from Moster import Moster
+from Moster import Monster
 
 class Map:
 
     PIXEL_PER_METER = (10.0 / 0.3)
 
-    MOVE_SPEED_KMPH = 40.0
+    MOVE_SPEED_KMPH = 50.0
     MOVE_SPEED_MPM = (MOVE_SPEED_KMPH * 1000.0 / 60.0)
     MOVE_SPEED_MPS = (MOVE_SPEED_MPM / 60.0)
     MOVE_SPEED_PPS = (MOVE_SPEED_MPS * PIXEL_PER_METER)
@@ -15,6 +15,7 @@ class Map:
     map = []
 
     def __init__(self):
+        self.map = []
         self.create_map()
         self.left = -40
         self.right = 640
@@ -23,28 +24,14 @@ class Map:
         item.set_map(self)
         del item
 
-        monster = Moster(0)
+        monster = Monster(0)
         monster.set_map(self)
         del monster
 
     def create_map(self):
-        map_data_file = '                                                   \
-        [                                                               \
-            {"Object": "ITEM", "Type" : "KEY", "x" : 600, "y" : 150}, \
-            {"Object": "ITEM", "Type" : "FRUIT", "x" : 900, "y" : 150}, \
-            {"Object": "MONSTER", "Type" : "RATTATA", "x" : 1200, "y" : 45}, \
-            {"Object": "MONSTER", "Type" : "RATTATA", "x" : 1300, "y" : 45}, \
-            {"Object": "ITEM", "Type" : "FIRE_STONE", "x" : 2000, "y" : 150}, \
-            {"Object": "ITEM", "Type" : "ELECTRIC_STONE", "x" : 2500, "y" : 50}, \
-            {"Object": "MONSTER", "Type" : "RATTATA", "x" : 3000, "y" : 45} \
-        ]                                                                \
-        '
 
+        map_data_file = open('map_data.json').read()
         map_data = json.loads(map_data_file)
-
-        #map_data_file = (str)(open('map_data.json', 'r'))
-        #map_data = json.loads(map_data_file)
-        #map_data_file.close()
 
         item_table = {
             "FRUIT": Item.FRUIT,
@@ -55,14 +42,15 @@ class Map:
         }
 
         monster_table = {
-            "RATTATA" : Moster.RATTATA
+            "DIGLETT" : Monster.DIGLETT,
+            "PIDGEOT" : Monster.PIDGEOT
         }
 
         for data in map_data:
             if data['Object'] == 'ITEM':
                 new_data = Item(item_table[data['Type']])
             elif data['Object'] == 'MONSTER':
-                new_data = Moster(monster_table[data['Type']])
+                new_data = Monster(monster_table[data['Type']])
             new_data.x = data['x']
             new_data.y = data['y']
             self.map.append(new_data)
@@ -81,7 +69,7 @@ class Map:
         for data in self.map:
             data.update(frame_time)
 
-        if 4000 < self.right:
+        if 6000 < self.right:
             self.left = -40
             self.right = 640
             for data in self.map:

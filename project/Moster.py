@@ -1,13 +1,12 @@
 from pico2d import *
 
-class Moster:
+class Monster:
     object_TYPE = "MONSTER"
 
+    ALIVE, HIT, DIE = 0, 1, 2
+    DIGLETT, PIDGEOT = 0, 1
 
-    ALIVE, DIE = 0, 1
-    RATTATA = 0
-
-    TIME_PER_ACTION = 0.5
+    TIME_PER_ACTION = 1
     ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
     FRAMES_PER_ACTION = 2
 
@@ -15,36 +14,44 @@ class Moster:
     map = None
     type = None
 
-    rattata_image = None
+    diglett_image = None
+    pidgeot_image = None
 
     def __init__(self, type):
         self.state = self.ALIVE
         self.total_frames = 0.0
         self.frame = 0
         self.time = 0
+        self.opacify = 1
 
-        if Moster.rattata_image == None:
-            Moster.rattata_image = load_image('resource/rattata.png')
+        if Monster.diglett_image == None:
+            Monster.diglett_image = load_image('resource/diglett.png')
 
-        if type == self.RATTATA:
-            self.type = self.RATTATA
-            self.image = Moster.rattata_image
-            self.w = 58
-            self.h = 42
+        if Monster.pidgeot_image == None:
+            Monster.pidgeot_image = load_image('resource/pidgeot.png')
+
+        if type == self.DIGLETT:
+            self.type = self.DIGLETT
+            self.image = Monster.diglett_image
+        elif type == self.PIDGEOT:
+            self.type = self.PIDGEOT
+            self.image = Monster.pidgeot_image
+
+        self.w = (int)(self.image.w / 2)
+        self.h = (int)(self.image.h / 2)
+
 
 
     def set_map(self, map):
-        Moster.map = map
+        Monster.map = map
 
     def draw(self):
         right = self.map.right
 
-        #self.draw_bb()
+        if self.state in (self.HIT, self.DIE):
+            self.image.opacify(self.opacify)
 
-        if self.state == self.DIE:
-            self.image.opacify(0)
-
-        self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, (640 - (right - self.x)), self. y)
+        self.image.clip_draw(self.frame * self.w, self.state * self.h, self.w, self.h, (640 - (right - self.x)), self. y)
 
         self.image.opacify(1)
 
@@ -59,9 +66,18 @@ class Moster:
 
 
     def update(self, frame_time):
-        self.total_frames += Moster.FRAMES_PER_ACTION * Moster.ACTION_PER_TIME * frame_time
+        self.total_frames += Monster.FRAMES_PER_ACTION * Monster.ACTION_PER_TIME * frame_time
         self.frame = (int)(self.total_frames) % 2
 
+        if self.state == self.HIT:
+            self.frame = 0
+            self.opacify -= frame_time
 
-    def die(self):
-        self.state = self.DIE
+            if self.opacify < 0:
+                self.opacify = 0
+                self.state = self.DIE
+
+
+    def hit(self):
+        self.state = self.HIT
+        self.opacify = 1

@@ -44,7 +44,7 @@ class Item:
         elif type == self.ELECTRIC_STONE:
             self.type = self.ELECTRIC_STONE
             self.image = Item.electricstone_image
-        elif type == self.waterstone_image:
+        elif type == self.WATER_STONE:
             self.type = self.WATER_STONE
             self.image = Item.waterstone_image
 
